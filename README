@@ -1,0 +1,6 @@
+To run the server
+
+./venv/bin/python server.py -c ./ssl/ssl_cert.pem -k ./ssl/ssl_key.pem --port 15000 -v
+
+To run the client
+./venv/bin/python client.py --host 127.0.0.1 --port 15000 -v
