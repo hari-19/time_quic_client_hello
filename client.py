@@ -46,8 +46,9 @@ async def main(
     port: int,
 ) -> None:
     logger.debug(f"Connecting to {host}:{port}")
-
-    if True:
+    i = 0
+    while(i < 100):
+        i += 1
         print("Starting a connection")
         try:
             configuration = QuicConfiguration(alpn_protocols=["dos-demo"], is_client=True)

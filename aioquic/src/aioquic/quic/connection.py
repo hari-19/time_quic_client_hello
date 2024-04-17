@@ -64,6 +64,7 @@ from .packet_builder import (
 )
 from .recovery import QuicPacketRecovery, QuicPacketSpace
 from .stream import FinalSizeError, QuicStream, StreamFinishedError
+from hwcounter import Timer
 
 logger = logging.getLogger("quic")
 
@@ -1295,12 +1296,18 @@ class QuicConnection:
                 event="alpn_information",
                 data={"client_alpns": self._configuration.alpn_protocols},
             )
+        with Timer() as t:
+            self._close_at = now + self._idle_timeout()
+            with Timer() as t_init:
+                self._initialize(self._peer_cid.cid)
 
-        self._close_at = now + self._idle_timeout()
-        self._initialize(self._peer_cid.cid)
+            with Timer() as t_handle:
+                self.tls.handle_message(b"", self._crypto_buffers)
+            with Timer() as t_push_crypto:
+                self._push_crypto_data()
 
-        self.tls.handle_message(b"", self._crypto_buffers)
-        self._push_crypto_data()
+        with open("time_client_hello.txt", "a") as f:
+            f.write(str(t.cycles) +"," + str(t_init.cycles) + "," + str(t_handle.cycles) +"," + str(t_push_crypto.cycles) +","+ "\n")
 
     def _discard_epoch(self, epoch: tls.Epoch) -> None:
         if not self._spaces[epoch].discarded:
