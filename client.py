@@ -47,7 +47,10 @@ async def main(
 ) -> None:
     logger.debug(f"Connecting to {host}:{port}")
     i = 0
-    while(i < 100):
+    with open("time_client_hello.csv", "w") as file:
+        file.write("Total Time,Init Time,Write to crypto stream,\n")
+
+    while(i < 1000):
         i += 1
         print("Starting a connection")
         try:

@@ -32,6 +32,7 @@ dependencies = [
     "pylsqpack>=0.3.3,<0.4.0",
     "pyopenssl>=24",
     "service-identity>=24.1.0",
+    "hwcounter==0.1.1",
 ]
 dynamic = ["version"]
 

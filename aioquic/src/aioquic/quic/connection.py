@@ -1300,14 +1300,12 @@ class QuicConnection:
             self._close_at = now + self._idle_timeout()
             with Timer() as t_init:
                 self._initialize(self._peer_cid.cid)
-
-            with Timer() as t_handle:
                 self.tls.handle_message(b"", self._crypto_buffers)
             with Timer() as t_push_crypto:
                 self._push_crypto_data()
 
-        with open("time_client_hello.txt", "a") as f:
-            f.write(str(t.cycles) +"," + str(t_init.cycles) + "," + str(t_handle.cycles) +"," + str(t_push_crypto.cycles) +","+ "\n")
+        with open("time_client_hello.csv", "a") as f:
+            f.write(str(t.cycles) +"," + str(t_init.cycles) +"," + str(t_push_crypto.cycles) +","+ "\n")
 
     def _discard_epoch(self, epoch: tls.Epoch) -> None:
         if not self._spaces[epoch].discarded:
@@ -2525,6 +2523,7 @@ class QuicConnection:
         for epoch, buf in self._crypto_buffers.items():
             self._crypto_streams[epoch].sender.write(buf.data)
             buf.seek(0)
+
 
     def _send_probe(self) -> None:
         self._probe_pending = True
